@@ -1,0 +1,3 @@
+// Бұл файл Capacitor баптауларын GitHub Actions үшін байланыстырады
+include ':app'
+
