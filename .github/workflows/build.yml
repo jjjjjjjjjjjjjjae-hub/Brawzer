@@ -7,32 +7,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Setup Node.js 22
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
           cache: 'gradle'
-      - run: npm install
-      - run: |
-          npx cap sync
-          cd android
-          chmod +x gradlew
-          ./gradlew assembleDebug
 
       - name: Build Web Assets
         run: |
+          npm install
           npm run build
 
       - name: Create Update Bundle
         run: zip -r dist.zip dist/
 
       - name: Create Version Info
-        run: echo '{"version": "${{ github.run_number }}", "url": "https://github.com/${{ github.repository }}/releases/latest/download/dist.zip"}' > version.json
+        run: |
+          echo '{"version": "${{ github.run_number }}", "url": "https://github.com/${{ github.repository }}/releases/latest/download/dist.zip"}' > version.json
 
       - name: Release Update
         uses: softprops/action-gh-release@v1
