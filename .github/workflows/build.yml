@@ -23,3 +23,23 @@ jobs:
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug
+
+      - name: Build Web Assets
+        run: |
+          npm run build
+
+      - name: Create Update Bundle
+        run: zip -r dist.zip dist/
+
+      - name: Create Version Info
+        run: echo '{"version": "${{ github.run_number }}", "url": "https://github.com/${{ github.repository }}/releases/latest/download/dist.zip"}' > version.json
+
+      - name: Release Update
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            dist.zip
+            version.json
+          tag_name: v${{ github.run_number }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
